@@ -1,6 +1,7 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 const webpack = require("webpack");
 const TerserPlugin = require("terser-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
@@ -19,8 +20,18 @@ module.exports = {
         chunkFilename: "[name].[contenthash].bundle.js",
         clean: true,
     },
-    mode: "production",
-    devtool: false,
+    mode: process.env.NODE_ENV || "development",
+    devtool: "source-map",
+    devServer: {
+        hot: true,
+        static: {
+            directory: path.join(__dirname, "public"),
+        },
+        historyApiFallback: true,
+        port: 3000,
+        open: true
+    },
+
     module: {
         rules: [
             {
@@ -62,6 +73,7 @@ module.exports = {
     },
 
     plugins: [
+        new ReactRefreshWebpackPlugin(), // Enables React Fast Refresh
         new HtmlWebpackPlugin({
             template: "./public/index.html",
             minify: {
